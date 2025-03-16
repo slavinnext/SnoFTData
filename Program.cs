@@ -32,7 +32,7 @@ namespace AntiGrabber
             "C2B05980D9127787"
         };
 
-        private static readonly string[] ProcessNames = { "Telegram", "AyuGram", "Telegram Desktop", "AyuGram Desktop" };
+        private static readonly string[] ProcessNames = { "Telegram", "AyuGram", "Telegram Desktop", "AyuGram Desktop", "Unigram", "Unigram Desktop", "Kotatogram", "Kotatogram Desktop", "Telegreat", "Telegreat Desktop", "Telefuel", "Telefuel Desktop", "Bettergram Desktop", "Bettergram" };
 
         static async Task Main()
         {
